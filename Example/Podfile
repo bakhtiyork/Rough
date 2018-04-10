@@ -1,0 +1,12 @@
+use_frameworks!
+
+target 'Rough_Example' do
+  pod 'Rough', :path => '../'
+  pod 'Charts', '~> 3.1'
+
+  target 'Rough_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end
