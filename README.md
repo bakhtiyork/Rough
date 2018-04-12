@@ -20,7 +20,7 @@ pod 'Rough'
 ```
 
 ## Usage
-![Rectangle](docs/img/ex1.png)
+![Rectangle](https://raw.githubusercontent.com/bakhtiyork/Rough/master/docs/img/ex1.png)
 ```swift
 let canvas = roughView.canvas
 canvas.rectangle(origin: CGPoint(x: 10, y: 10), width: 200, height: 100)
@@ -28,7 +28,7 @@ roughView.setNeedsDisplay()
 ```
 
 ### Lines and Ellipses
-![Lines and Ellipses](docs/img/ex2.png)
+![Lines and Ellipses](https://raw.githubusercontent.com/bakhtiyork/Rough/master/docs/img/ex2.png)
 ```swift
 canvas.circle(center: CGPoint(x: 80, y: 120), radius: 25)
 canvas.ellipse(center: CGPoint(x: 300, y: 100), width: 150, height: 80)
@@ -36,7 +36,7 @@ canvas.line(from: CGPoint(x: 80, y: 120), to: CGPoint(x: 300, y: 100))
 ```
 
 ### Filling
-![Filling](docs/img/ex3.png)
+![Filling](https://raw.githubusercontent.com/bakhtiyork/Rough/master/docs/img/ex3.png)
 ```swift
 canvas.circle(center: CGPoint(x: 50, y: 50), radius: 40) { options in
     options.fill = UIColor.red
@@ -66,7 +66,7 @@ canvas.rectangle(origin: CGPoint(x: 120, y: 105), width: 80, height: 80) { optio
 
 
 ### Sketching style
-![Sketching style](docs/img/ex4.png)
+![Sketching style](https://raw.githubusercontent.com/bakhtiyork/Rough/master/docs/img/ex4.png)
 ```swift
 canvas.rectangle(origin: CGPoint(x: 15, y: 15), width: 80, height: 80) { options in
     options.roughness = 0.5
@@ -92,7 +92,7 @@ canvas.rectangle(origin: CGPoint(x: 220, y: 15), width: 80, height: 80) { option
 
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
 
-![Screenshot](docs/img/screenshot.png)
+<img alt="Screenshot1" src="https://raw.githubusercontent.com/bakhtiyork/Rough/master/docs/img/screenshot1.png" width="320"> <img alt="Screenshot2" src="https://raw.githubusercontent.com/bakhtiyork/Rough/master/docs/img/screenshot2.png" width="320">
 
 
 ## Credits
