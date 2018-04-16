@@ -6,22 +6,20 @@
 //  https://github.com/bakhtiyork/Rough
 //
 
-
 public class Renderer {
-    
     init() {}
-    
+
     func line(from: CGPoint, to: CGPoint, options: Options) -> Shape {
         let ops = pathOfDoubleLine(from: from, to: to, options: options)
         return Shape.path(path: Shape.toBezierPath(ops: ops, closed: false), options: options)
     }
-    
+
     func linearPath(points: [CGPoint], close: Bool, options: Options) -> Shape {
         let len = points.count
         if len > 2 {
             var ops = [DrawOp]()
-            for i in 0...len-2 {
-                ops.append(contentsOf: pathOfDoubleLine(from: points[i], to: points[i+1], options: options))
+            for i in 0 ... len - 2 {
+                ops.append(contentsOf: pathOfDoubleLine(from: points[i], to: points[i + 1], options: options))
             }
             if close {
                 ops.append(contentsOf: pathOfDoubleLine(from: points.last!, to: points.first!, options: options))
@@ -34,11 +32,11 @@ public class Renderer {
         }
         return Shape.none
     }
-    
+
     func polygon(points: [CGPoint], options: Options) -> Shape {
         return linearPath(points: points, close: true, options: options)
     }
-    
+
     func curve(points: [CGPoint], options: Options) -> Shape {
         var ops1 = pathOfCurve(points: points, offset: 1 + options.roughness * 0.2, options: options)
         let ops2 = pathOfCurve(points: points, offset: 1.5 * (1 + options.roughness * 0.22), options: options)
@@ -46,7 +44,7 @@ public class Renderer {
         let path = Shape.toBezierPath(ops: ops1, closed: false)
         return Shape.path(path: path, options: options)
     }
-    
+
     func ellipse(point: CGPoint, width: Float, height: Float, options: Options) -> Shape {
         let increment = (Float.pi * 2) / Float(options.curveStepCount)
         var rx = abs(width / 2.0)
@@ -59,15 +57,15 @@ public class Renderer {
         let path = Shape.toBezierPath(ops: ops1, closed: true)
         return Shape.path(path: path, options: options)
     }
-    
+
     func arc(center: CGPoint, width: Float, height: Float, start: Float, stop: Float, closed: Bool, roughClosure: Bool, options: Options) -> Shape {
         var ops = [DrawOp]()
         let cx = center.x.float
         let cy = center.y.float
         var rx = abs(width / 2)
         var ry = abs(height / 2)
-        rx += getOffset(offset:rx * 0.01, options: options)
-        ry += getOffset(offset:rx * 0.01, options: options)
+        rx += getOffset(offset: rx * 0.01, options: options)
+        ry += getOffset(offset: rx * 0.01, options: options)
         var strt = start
         var stp = stop
         while strt < 0 {
@@ -96,7 +94,7 @@ public class Renderer {
         let path = Shape.toBezierPath(ops: ops, closed: closed)
         return .path(path: path, options: options)
     }
-    
+
     func solidFillShape(points: [CGPoint], options: Options) -> Shape {
         var ops = [DrawOp]()
         if !points.isEmpty {
@@ -113,7 +111,7 @@ public class Renderer {
                     x: xs[0] + getOffset(offset: offset, options: options),
                     y: ys[0] + getOffset(offset: offset, options: options)
                 )))
-                for i in 1...len-1 {
+                for i in 1 ... len - 1 {
                     ops.append(.line(to: CGPoint(
                         x: xs[i] + getOffset(offset: offset, options: options),
                         y: ys[i] + getOffset(offset: offset, options: options)
@@ -124,32 +122,31 @@ public class Renderer {
         let path = Shape.toBezierPath(ops: ops, closed: true)
         return .fill(path: path, options: options)
     }
-    
+
     func hachureFillShape(xs: [Float], ys: [Float], options: Options) -> Shape {
         var ops = [DrawOp]()
-        if  let left = xs.min(),
+        if let left = xs.min(),
             let right = xs.max(),
             let top = ys.min(),
-            let bottom = ys.max()
-        {
+            let bottom = ys.max() {
             let gap = max(options.hachureGap >= 0 ? options.hachureGap : options.strokeWidth * 4.0, 0.1)
-            
+
             let hachureAngle = options.hachureAngle.degreesToRadians
-            
+
             let cosAngle = cos(hachureAngle)
             let sinAngle = sin(hachureAngle)
             let tanAngle = tan(hachureAngle)
             let iterator = HachureIterator(top: top - 1, bottom: bottom + 1, left: left - 1, right: right + 1, gap: gap, sinAngle: sinAngle, cosAngle: cosAngle, tanAngle: tanAngle)
-            
+
             while let rectCoords = iterator.next() {
                 let lines = getIntersectingLines(lineCoords: rectCoords, xs: xs, ys: ys)
                 if lines.count < 2 {
                     continue
                 }
-                
-                for i in 0...lines.count-2 {
+
+                for i in 0 ... lines.count - 2 {
                     let p1 = lines[i]
-                    let p2 = lines[i+1]
+                    let p2 = lines[i + 1]
                     ops.append(contentsOf: pathOfDoubleLine(from: p1, to: p2, options: options))
                 }
             }
@@ -157,7 +154,7 @@ public class Renderer {
         let path = Shape.toBezierPath(ops: ops, closed: false)
         return .hachure(path: path, options: options)
     }
-    
+
     func hachureFillShape(points: [CGPoint], options: Options) -> Shape {
         var xs = [Float]()
         var ys = [Float]()
@@ -167,7 +164,7 @@ public class Renderer {
         }
         return hachureFillShape(xs: xs, ys: ys, options: options)
     }
-    
+
     func hachureFillEllipse(center: CGPoint, width: Float, height: Float, options: Options) -> Shape {
         var ops = [DrawOp]()
         let cx = center.x.float
@@ -203,16 +200,16 @@ public class Renderer {
         let path = Shape.toBezierPath(ops: ops, closed: false)
         return .hachure(path: path, options: options)
     }
-    
+
     func hachureFillArc(center: CGPoint, width: Float, height: Float, start: Float, stop: Float, options: Options) -> Shape {
         var points = [CGPoint]()
-        
+
         let cx = center.x.float
         let cy = center.y.float
         var rx = abs(width / 2)
         var ry = abs(height / 2)
-        rx += getOffset(offset:rx * 0.01, options: options)
-        ry += getOffset(offset:rx * 0.01, options: options)
+        rx += getOffset(offset: rx * 0.01, options: options)
+        ry += getOffset(offset: rx * 0.01, options: options)
         var strt = start
         var stp = stop
         while strt < 0 {
@@ -237,22 +234,22 @@ public class Renderer {
             y: cy + ry * sin(stp)
         ))
         points.append(center)
-        
+
         return hachureFillShape(points: points, options: options)
     }
-    
-    func svgPath(svg: String, options: Options) -> Shape {
+
+    func svgPath(svg _: String, options _: Options) -> Shape {
         return .none
     }
-    
+
     func pathOfLine(from: CGPoint, to: CGPoint, options: Options, move: Bool, overlay: Bool) -> [DrawOp] {
         var ops = [DrawOp]()
-        
+
         let x1 = from.x.float
         let y1 = from.y.float
         let x2 = to.x.float
         let y2 = to.y.float
-        
+
         let lengthSq = pow((x1 - x2), 2) + pow((y1 - y2), 2)
         var offset = options.maxRandomnessOffset
         if (offset * offset * 100) > lengthSq {
@@ -264,7 +261,7 @@ public class Renderer {
         var midDispY = options.bowing * options.maxRandomnessOffset * (x1 - x2) / 200.0
         midDispX = getOffset(offset: midDispX, options: options)
         midDispY = getOffset(offset: midDispY, options: options)
-        
+
         if move {
             if overlay {
                 let point = CGPoint(
@@ -312,16 +309,15 @@ public class Renderer {
             ))
         }
         return ops
-        
     }
-    
+
     func pathOfDoubleLine(from: CGPoint, to: CGPoint, options: Options) -> [DrawOp] {
         var ops1 = pathOfLine(from: from, to: to, options: options, move: true, overlay: false)
         let ops2 = pathOfLine(from: from, to: to, options: options, move: true, overlay: true)
         ops1.append(contentsOf: ops2)
         return ops1
     }
-    
+
     func pathOfEllipse(increment: Float, center: CGPoint, rx: Float, ry: Float, offset: Float, overlap: Float, options: Options) -> [DrawOp] {
         let radOffset = getOffset(offset: 0.5, options: options) - Float.pi / 2.0
         let cx = center.x.float
@@ -353,19 +349,19 @@ public class Renderer {
         ))
         return pathOfCurve(points: points, closePoint: nil, options: options)
     }
-    
+
     func pathOfCurve(points: [CGPoint], closePoint: CGPoint?, options: Options) -> [DrawOp] {
         var ops = [DrawOp]()
         let len = points.count
         if len > 3 {
             let s = Float(1.0 - options.curveTightness)
             ops.append(DrawOp.move(to: points.first!))
-            for i in 1...(len-3) {
+            for i in 1 ... (len - 3) {
                 let point = points[i]
-                let nextPoint = points[i+1]
-                let nextNextPoint = points[i+2]
-                let prevPoint = points[i-1]
-                
+                let nextPoint = points[i + 1]
+                let nextNextPoint = points[i + 2]
+                let prevPoint = points[i - 1]
+
                 let b1 = CGPoint(
                     x: point.x.float + (s * nextPoint.x.float - s * prevPoint.x.float) / 6,
                     y: point.y.float + (s * nextPoint.y.float - s * prevPoint.y.float) / 6
@@ -394,7 +390,7 @@ public class Renderer {
         }
         return ops
     }
-    
+
     func pathOfCurve(points: [CGPoint], offset: Float, options: Options) -> [DrawOp] {
         var ps = [CGPoint]()
         ps.append(CGPoint(
@@ -407,10 +403,10 @@ public class Renderer {
                 y: point.y.float + getOffset(offset: offset, options: options)
             ))
         }
-        
+
         return pathOfCurve(points: ps, closePoint: nil, options: options)
     }
-    
+
     func pathOfArc(increment: Float, cx: Float, cy: Float, rx: Float, ry: Float, strt: Float, stp: Float, offset: Float, options: Options) -> [DrawOp] {
         let radOffset = strt + getOffset(offset: 0.1, options: options)
         var points = [CGPoint]()
@@ -426,7 +422,7 @@ public class Renderer {
             ))
             angle = angle + increment
         }
-        
+
         points.append(CGPoint(
             x: cx + rx * cos(stp),
             y: cy + ry * sin(stp)
@@ -435,30 +431,30 @@ public class Renderer {
             x: cx + rx * cos(stp),
             y: cy + ry * sin(stp)
         ))
-        
+
         return pathOfCurve(points: points, closePoint: nil, options: options)
     }
-    
+
     func getOffset(min: Float, max: Float, options: Options) -> Float {
         return options.roughness * (Float.random * (max - min) + min)
     }
-    
+
     func getOffset(offset: Float, options: Options) -> Float {
         return getOffset(min: -offset, max: offset, options: options)
     }
-    
+
     func getIntersectingLines(lineCoords: [Float], xs: [Float], ys: [Float]) -> [CGPoint] {
         var intersections = [CGPoint]()
         var s1 = Segment(px1: lineCoords[0], py1: lineCoords[1], px2: lineCoords[2], py2: lineCoords[3])
-        for i in 0...xs.count - 1 {
-            let s2 = Segment(px1: xs[i], py1: ys[i], px2: xs[(i+1) % xs.count], py2: ys[(i + 1) % xs.count])
+        for i in 0 ... xs.count - 1 {
+            let s2 = Segment(px1: xs[i], py1: ys[i], px2: xs[(i + 1) % xs.count], py2: ys[(i + 1) % xs.count])
             if s1.compare(other: s2) == .intersects {
                 intersections.append(CGPoint(x: s1.xi, y: s1.yi))
             }
         }
         return intersections
     }
-    
+
     func affine(x: Float, y: Float, cx: Float, cy: Float, sinAnglePrime: Float, cosAnglePrime: Float, R: Float) -> (Float, Float) {
         let A = -cx * cosAnglePrime - cy * sinAnglePrime + cx
         let B = R * (cx * sinAnglePrime - cy * cosAnglePrime) + cy
@@ -472,4 +468,3 @@ public class Renderer {
         )
     }
 }
-

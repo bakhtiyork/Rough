@@ -8,15 +8,15 @@
 
 @objc open class RoughView: UIView {
     @objc public var canvas = RoughCanvas()
-    
+
     @objc public required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
-    
+
     @objc public override init(frame: CGRect) {
         super.init(frame: frame)
     }
-    
+
     @objc open override func draw(_ rect: CGRect) {
         super.draw(rect)
         if let context = UIGraphicsGetCurrentContext() {

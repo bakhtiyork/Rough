@@ -23,7 +23,7 @@ extension String {
     mutating func removingRegexMatches(pattern: String, replaceWith: String = "") {
         do {
             let regex = try NSRegularExpression(pattern: pattern, options: NSRegularExpression.Options.caseInsensitive)
-            let range = NSMakeRange(0, self.count)
+            let range = NSMakeRange(0, count)
             self = regex.stringByReplacingMatches(in: self, options: [], range: range, withTemplate: replaceWith)
         } catch {
             return
@@ -33,7 +33,7 @@ extension String {
 
 extension Float {
     public static var random: Float {
-        return Float(arc4random()) / 0xFFFFFFFF
+        return Float(arc4random()) / 0xFFFF_FFFF
     }
 }
 
@@ -41,6 +41,7 @@ extension CGPoint {
     init(x: Float, y: Float) {
         self.init(x: CGFloat(x), y: CGFloat(y))
     }
+
     init(pair: (Float, Float)) {
         self.init(x: CGFloat(pair.0), y: CGFloat(pair.1))
     }
@@ -50,7 +51,7 @@ public enum DrawOp {
     case move(to: CGPoint)
     case bezierCurve(to: CGPoint, controlPoint1: CGPoint, controlPoint2: CGPoint)
     case quadCurve(to: CGPoint,
-        controlPoint: CGPoint)
+                   controlPoint: CGPoint)
     case line(to: CGPoint)
 }
 
@@ -59,18 +60,18 @@ public enum Shape {
     case path(path: BezierPath, options: Options)
     case fill(path: BezierPath, options: Options)
     case hachure(path: BezierPath, options: Options)
-    
+
     static func toBezierPath(ops: [DrawOp], closed: Bool) -> BezierPath {
         let bezierPath = BezierPath()
         for op in ops {
             switch op {
-            case .move(to: let point):
+            case let .move(to: point):
                 bezierPath.move(to: point)
-            case .bezierCurve(to: let origin, controlPoint1: let point1, controlPoint2: let point2):
+            case let .bezierCurve(to: origin, controlPoint1: point1, controlPoint2: point2):
                 bezierPath.addCurve(to: origin, controlPoint1: point1, controlPoint2: point2)
-            case .quadCurve(to: let origin, controlPoint: let point):
+            case let .quadCurve(to: origin, controlPoint: point):
                 bezierPath.addQuadCurve(to: origin, controlPoint: point)
-            case .line(to: let point):
+            case let .line(to: point):
                 bezierPath.addLine(to: point)
             }
         }
@@ -87,7 +88,7 @@ public enum FillType {
 
 @objc public class Options: NSObject {
     override init() {}
-    
+
     public var maxRandomnessOffset: Float = 2.0
     public var bowing: Float = 1.0
     public var roughness: Float = 1.0
@@ -101,8 +102,8 @@ public enum FillType {
     public var hachureAngle: Float = -41.0
     public var hachureGap: Float = -1.0
     public var simplification: Bool = false
-    
-    static public func copy(options: Options) -> Options {
+
+    public static func copy(options: Options) -> Options {
         let copy = Options()
         copy.maxRandomnessOffset = options.maxRandomnessOffset
         copy.bowing = options.bowing
@@ -120,4 +121,3 @@ public enum FillType {
         return copy
     }
 }
-
