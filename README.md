@@ -8,7 +8,7 @@ Rough lets you draw in a sketchy, hand-drawn-like, style. It is Swift clone of [
 
 
 ## Requirements
-Xcode 9, iOS 9
+Xcode 9, iOS 10
 
 ## Installation
 
