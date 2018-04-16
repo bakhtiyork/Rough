@@ -5,7 +5,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'Rough'
-  s.version          = '0.1.1'
+  s.version          = '0.1.2'
   s.summary          = 'Rough lets you draw in a sketchy, hand-drawn-like, style.'
 
 
