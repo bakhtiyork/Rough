@@ -19,7 +19,7 @@ Rough lets you draw in a sketchy, hand-drawn-like, style. The library defines pr
   s.author           = { 'Bakhtiyor Khodjaev' => 'pods@bakhtiyor.com' }
   s.source           = { :git => 'https://github.com/bakhtiyork/Rough.git', :tag => s.version.to_s }
 
-  s.ios.deployment_target = '9.0'
+  s.ios.deployment_target = '10.0'
   s.swift_version = '4.0'
 
   s.source_files = 'Rough/Classes/**/*'
